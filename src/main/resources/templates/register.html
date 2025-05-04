@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head">
+    <style>
+        body {
+            background-color: #eaf4ff;
+        }
+
+        .register-card {
+            background-color: #ffffff;
+            border: 2px solid #a2d2ff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .register-card .card-header {
+            background-color: #a2d2ff;
+            color: #3a2f75;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: none;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .form-control:focus {
+            border-color: #3a2f75;
+            box-shadow: 0 0 0 0.2rem rgba(58, 47, 117, 0.25);
+        }
+
+        .btn-register {
+            background-color: #3a2f75;
+            color: white;
+            border: none;
+        }
+
+        .btn-register:hover {
+            background-color: #2c2560;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<header th:replace="layout/layout :: header"></header>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+        <div class="card register-card text-center p-3">
+            <div class="card-header">
+                <span th:text="#{text.menu.signUp}"> Register</span>
+            </div>
+
+            <form th:action="@{/register}" th:object="${user}" method="post" class="mt-3 px-3">
+                <div class="form-group mb-3">
+                    <input type="text" id="username" th:field="*{username}"
+                           class="form-control" placeholder="Username" required />
+                </div>
+
+                <div class="form-group mb-3">
+                    <input type="password" id="password" th:field="*{password}"
+                           class="form-control" placeholder="Password" required />
+                </div>
+
+                <div class="form-group mb-3">
+                    <input type="submit" class="btn btn-lg btn-primary w-100" th:value="#{text.menu.signUp}" value="Register" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="layout/layout :: footer"></footer>
+</body>
+</html>

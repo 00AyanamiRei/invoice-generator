@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout :: head">
+	<style>
+		body {
+			background-color: #f8f9fa;
+		}
+		.card {
+			border-radius: 1rem;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		}
+		.card-header {
+			background-color: #cdb4db;
+			color: #3a2f75;
+		}
+		.btn-warning {
+			background-color: #ffafcc;
+			border: none;
+			color: #3a2f75;
+		}
+		.btn-success {
+			background-color: #a2d2ff;
+			border: none;
+		}
+		.btn-primary {
+			background-color: #bde0fe;
+			border: none;
+			color: #3a2f75;
+		}
+		.btn-danger {
+			background-color: #ff6b6b;
+			border: none;
+		}
+		.list-group-item {
+			background-color: #ffffff;
+			border-left: 5px solid #a2d2ff;
+		}
+	</style>
+</head>
+<body>
+<header th:replace="layout/layout :: header"></header>
+
+<div class="container-fluid py-5">
+	<div class="row justify-content-center">
+		<div class="col-12 col-md-10 col-lg-8">
+
+			<a class="mb-3 btn btn-warning" th:text="'« Back'"
+			   th:href="@{/list}"></a>
+
+			<div class="card mt-3">
+				<div class="card-header d-flex flex-wrap justify-content-between align-items-center">
+					<h2 th:text="${title}" class="card-title mb-0">Title</h2>
+
+					<a sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-success"
+					   th:href="@{'/invoice/form/' + ${customer.id}}"
+					   th:text="'Create Invoice'"></a>
+				</div>
+
+				<div class="card-body">
+
+					<div class="row g-4 align-items-center">
+						<div class="col-md-4 text-center">
+							<img th:if="${customer.photo != null}"
+								 class="img-fluid img-thumbnail rounded"
+								 style="max-width: 100%" th:src="@{'/uploads/' + ${customer.photo}}"
+								 th:alt="${customer.photo}" />
+						</div>
+
+						<div class="col-md-8">
+							<ul class="list-group">
+								<li class="list-group-item" th:text="'First Name: ' + ${customer.firstName}"></li>
+								<li class="list-group-item" th:text="'Last Name: ' + ${customer.lastName}"></li>
+								<li class="list-group-item" th:text="'Email: ' + ${customer.email}"></li>
+								<li class="list-group-item" th:text="'Created At: ' + ${customer.createdAt}"></li>
+							</ul>
+						</div>
+					</div>
+
+					<p th:if="${#lists.isEmpty(customer.invoices)}"
+					   class="alert alert-info mt-4"
+					   th:text="'There are no invoices assigned for customer ' + ${customer.firstName} + ' ' + ${customer.lastName}"></p>
+
+					<div class="table-responsive" th:if="${not #lists.isEmpty(customer.invoices)}">
+						<table class="table table-hover table-bordered mt-4">
+							<thead class="table-dark">
+							<tr>
+								<th>Invoice ID</th>
+								<th>Description</th>
+								<th>Date</th>
+								<th>Total</th>
+								<th sec:authorize="hasRole('ROLE_ADMIN')">View</th>
+								<th sec:authorize="hasRole('ROLE_ADMIN')">Delete</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr th:each="invoice : ${customer.invoices}">
+								<td th:text="${invoice.id}"></td>
+								<td th:text="${invoice.description}"></td>
+								<td th:text="${invoice.createdAt}"></td>
+								<td th:text="${invoice.totalInvoice}"></td>
+								<td sec:authorize="hasRole('ROLE_ADMIN')">
+									<a class="btn btn-primary"
+									   th:href="@{'/invoice/view/' + ${invoice.id}}"
+									   th:text="'Details'"></a>
+								</td>
+								<td sec:authorize="hasRole('ROLE_ADMIN')">
+									<a class="btn btn-danger"
+									   th:href="@{'/invoice/delete/' + ${invoice.id}}"
+									   th:text="'Delete'"
+									   onclick="return confirm('Are you sure you want to delete the invoice?');"></a>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<footer th:replace="layout/layout :: footer" class="mt-5"></footer>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout :: head">
+	<!-- Підключення адаптивного дизайну -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-pzjw8f+ua7Kw1TIq0v8FqGZTj6fVbPz4bho/jmMqaERzx2jDHEqA3YYdCkr6KQfl" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="bg-light">
+<header th:replace="layout/layout :: header"></header>
+
+<div class="container mt-5 mb-5">
+	<a class="mb-3 btn btn-primary" th:text="#{text.global.back}"
+	   th:href="@{'/view/' + ${invoice.client.id}}"><i class="fas fa-arrow-left"></i> Back</a>
+	<a class="btn btn-success float-right mx-2" target="_blank"
+	   th:href="@{'/invoice/view/' + ${invoice.id}(format=xlsx)}"><i class="fas fa-file-excel"></i> Excel</a>
+
+	<a class="btn btn-danger float-right" target="_blank"
+	   th:href="@{'/invoice/view/' + ${invoice.id}(format=pdf)}"><i class="fas fa-file-pdf"></i> PDF</a>
+
+	<h1 th:text="${title}" class="text-center mt-2 mb-5 text-primary">Invoice Details</h1>
+
+	<!-- Customer Data -->
+	<ul class="list-group my-2">
+		<li class="list-group-item list-group-item-info" th:text="#{text.invoice.view.customerData}"></li>
+		<li class="list-group-item" th:text="${invoice.client}"></li>
+		<li class="list-group-item" th:text="${invoice.client.email}"></li>
+	</ul>
+
+	<!-- Invoice Data -->
+	<ul class="list-group my-2">
+		<li class="list-group-item list-group-item-success" th:text="#{text.invoice.view.invoiceData}"></li>
+		<li class="list-group-item"
+			th:text="'#{text.customer.invoice.number}: ' + ${invoice.id}"></li>
+		<li class="list-group-item"
+			th:text="'#{text.customer.invoice.description}: ' + ${invoice.description}"></li>
+		<li class="list-group-item"
+			th:text="'#{text.customer.invoice.date}: ' + ${invoice.createdAt}"></li>
+	</ul>
+
+	<div class="alert alert-info my-2" th:if="${#lists.isEmpty(invoice.items)}"
+		 th:text="'#{text.invoice.view.noItems}: ' + ${invoice.description}"></div>
+
+	<!-- Invoice Items Table -->
+	<table class="table table-striped table-hover table-bordered my-2" th:if="${not #lists.isEmpty(invoice.items)}">
+		<thead class="thead-dark">
+		<tr>
+			<th th:text="#{text.invoice.form.item.name}">Product</th>
+			<th th:text="#{text.invoice.form.item.price}">Price</th>
+			<th th:text="#{text.invoice.form.item.quantity}">Quantity</th>
+			<th th:text="#{text.invoice.form.item.total}">Total</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="linea : ${invoice.items}">
+			<td th:text="${linea.product.name}"></td>
+			<td th:text="${linea.product.price}"></td>
+			<td th:text="${linea.quantity}"></td>
+			<td th:text="${linea.calculateAmount()}"></td>
+		</tr>
+		</tbody>
+	</table>
+
+	<div class="d-flex justify-content-end">
+		<h5 class="mb-1">
+			#{text.invoice.form.total}: <span class="badge badge-info" th:text="${invoice.totalInvoice}"></span>
+		</h5>
+	</div>
+
+	<!-- Observations Card -->
+	<div class="card border-info mb-4 mt-4">
+		<div class="card-header bg-info text-white">
+			<h3 th:text="#{text.invoice.form.note}">Observations</h3>
+		</div>
+		<div class="card-body">
+			<p class="card-text" th:text="${invoice.observation}"
+			   th:if="${not #strings.isEmpty(invoice.observation)}"></p>
+			<p class="card-text" th:if="${#strings.isEmpty(invoice.observation)}"
+			   th:text="#{text.invoice.view.noNotes}"></p>
+		</div>
+	</div>
+</div>
+
+<footer th:replace="layout/layout :: footer"></footer>
+
+<!-- JavaScript and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy3g6D0f8d5HEKk12V2rd/dh7p3n2ik5wT5paXl7k" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0v8FqGZTj6fVbPz4bho/jmMqaERzx2jDHEqA3YYdCkr6KQfl" crossorigin="anonymous"></script>
+</body>
+</html>

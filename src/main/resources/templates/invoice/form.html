@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout/layout :: head}">
+	<!-- Підключення адаптивного дизайну -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-pzjw8f+ua7Kw1TIq0v8FqGZTj6fVbPz4bho/jmMqaERzx2jDHEqA3YYdCkr6KQfl" crossorigin="anonymous">
+	<style>
+		body {
+			background-color: #f8f9fa;
+			font-family: 'Poppins', sans-serif;
+		}
+
+		header, footer {
+			background-color: #343a40;
+			color: #fff;
+		}
+
+		h1, .form-group label {
+			color: #343a40;
+		}
+
+		.btn-warning {
+			background-color: #ffcd38;
+			border-color: #ffcd38;
+			color: #fff;
+		}
+
+		.btn-warning:hover {
+			background-color: #e6b019;
+			border-color: #e6b019;
+		}
+
+		.btn-primary {
+			background-color: #007bff;
+			border-color: #007bff;
+			color: #fff;
+		}
+
+		.btn-primary:hover {
+			background-color: #0056b3;
+			border-color: #004085;
+		}
+
+		.form-control {
+			border-radius: 8px;
+			box-shadow: none;
+			border: 1px solid #ced4da;
+		}
+
+		.form-control:focus {
+			border-color: #80bdff;
+			box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+		}
+
+		.table th, .table td {
+			padding: 15px;
+			text-align: center;
+		}
+
+		.table thead {
+			background-color: #6c757d;
+			color: #fff;
+		}
+
+		.table tbody tr:nth-child(odd) {
+			background-color: #f8f9fa;
+		}
+
+		.table-striped tbody tr:nth-of-type(odd) {
+			background-color: #f2f2f2;
+		}
+
+		.badge-secondary {
+			background-color: #6c757d;
+		}
+
+		@media (max-width: 768px) {
+			.col-8 {
+				max-width: 100%;
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+
+			.form-control {
+				padding: 12px;
+				font-size: 14px;
+			}
+
+			.btn-block {
+				font-size: 14px;
+			}
+		}
+	</style>
+</head>
+<body>
+<header th:replace="~{layout/layout :: header}"></header>
+
+<div class="container mt-5 mb-5">
+	<a class="mb-3 btn btn-warning" th:text="#{text.global.back}" th:href="@{'/view/' + ${invoice.client.id}}"></a>
+
+	<h1 th:text="${title}" class="text-center mt-2 mb-5">Title</h1>
+
+	<div class="col-8 mx-auto mt-5 mb-5">
+		<form th:action="@{/invoice/form}" th:object="${invoice}" method="POST">
+			<div class="form-group">
+				<label for="customer" th:text="#{text.invoice.form.customer}">Customer</label>
+				<input id="customer" class="form-control" th:value="${invoice.client.firstName} + ' ' + ${invoice.client.lastName}" disabled="disabled" />
+			</div>
+
+			<div class="form-group">
+				<label for="description" th:text="#{text.customer.invoice.description}">Description</label>
+				<input type="text" class="form-control" id="description" th:field="*{description}" th:errorclass="'form-control is-invalid'" />
+				<small class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></small>
+			</div>
+
+			<div class="form-group">
+				<label for="observation" th:text="#{text.invoice.form.note}">Observation</label>
+				<textarea id="observation" th:field="*{observation}" class="form-control"></textarea>
+			</div>
+
+			<div class="form-group">
+				<label for="search_product" th:text="#{text.invoice.form.search}">Search Product</label>
+				<input type="text" class="form-control" name="search_product" id="search_product" />
+			</div>
+
+			<table th:replace="invoice/plantilla-items :: invoiceItems"></table>
+
+			<table id="loadItemProducts" class="table text-center table-sm table-striped table-hover table-bordered">
+				<thead>
+				<tr>
+					<th th:text="#{text.invoice.form.item.name}">Product</th>
+					<th th:text="#{text.invoice.form.item.price}">Price</th>
+					<th th:text="#{text.invoice.form.item.quantity}">Quantity</th>
+					<th th:text="#{text.invoice.form.item.total}">Total</th>
+					<th th:text="#{text.invoice.form.item.delete}">Remove</th>
+				</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+
+			<h5>
+				<span class="badge badge-secondary" id="grand_total" th:text="#{text.invoice.form.total} + ': 0'">Grant Total: 0</span>
+			</h5>
+
+			<input type="submit" th:value="${title}" class="btn btn-primary btn-block py-2" />
+		</form>
+	</div>
+</div>
+
+<footer th:replace="~{layout/layout :: footer}" class="mt-5"></footer>
+<script th:replace="~{invoice/js/autocomplete-products :: javascript}"></script>
+</body>
+</html>

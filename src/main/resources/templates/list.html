@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:replace="~{layout/layout :: head}"></th:block>
+<style>
+	body {
+		background-color: #eaf4ff;
+	}
+
+	h1 {
+		color: #3a2f75;
+		font-weight: bold;
+	}
+
+	.btn-secondary {
+		background-color: #ffafcc;
+		border-color: #ffafcc;
+		color: #3a2f75;
+	}
+
+	.btn-secondary:hover {
+		background-color: #f793b9;
+		border-color: #f793b9;
+	}
+
+	.table thead {
+		background-color: #a2d2ff;
+		color: #3a2f75;
+		font-weight: 600;
+	}
+
+	.btn-outline-success, .btn-outline-warning, .btn-outline-danger {
+		min-width: 90px;
+	}
+
+	.container-fluid .btn {
+		margin-left: 0.5rem;
+	}
+
+	.btn-info {
+		background-color: #bde0fe;
+		border-color: #bde0fe;
+		color: #3a2f75;
+	}
+
+	.btn-info:hover {
+		background-color: #a2d2ff;
+		border-color: #a2d2ff;
+	}
+</style>
+
+<body>
+<header th:replace="~{layout/layout :: header}"></header>
+
+<div class="container-fluid px-3 px-md-5">
+	<h1 th:text="${title}" class="text-center mt-5 mb-4">Customers</h1>
+
+	<div class="d-flex flex-wrap justify-content-end mb-3">
+		<a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/form}"
+		   class="btn btn-secondary" th:text="#{text.customer.create}">Create</a>
+		<a class="btn btn-outline-success" th:href="@{'/list'(format=csv)}" th:text="'CSV'">CSV</a>
+		<a class="btn btn-outline-success" th:href="@{'/list'(format=xml)}" th:text="'XML'">XML</a>
+		<a class="btn btn-outline-success" th:href="@{'/list'(format=json)}" th:text="'JSON'">JSON</a>
+	</div>
+
+	<p th:if="${customers.isEmpty()}" class="text-center text-muted" th:text="'No data to display'">No data to display</p>
+
+	<div class="table-responsive">
+		<table th:if="${!customers.isEmpty()}" class="table table-bordered table-hover text-center">
+			<thead>
+			<tr>
+				<th sec:authorize="hasRole('ROLE_USER')">Id</th>
+				<th th:text="#{text.customer.firstName}">Name</th>
+				<th th:text="#{text.customer.lastName}">Last Name</th>
+				<th th:text="#{text.customer.email}">Email</th>
+				<th th:text="#{text.customer.createdAt}">Created</th>
+				<th sec:authorize="hasRole('ROLE_ADMIN')" th:text="#{text.customer.invoice.create}">Invoice</th>
+				<th sec:authorize="hasRole('ROLE_ADMIN')" th:text="#{text.customer.edit}">Edit</th>
+				<th sec:authorize="hasRole('ROLE_ADMIN')" th:text="#{text.customer.delete}">Delete</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="customer : ${customers}">
+				<td sec:authorize="hasRole('ROLE_USER')">
+					<a class="btn btn-info" th:href="@{'/view/' + ${customer.id}}" th:text="${customer.id}">View</a>
+				</td>
+				<td th:text="${customer.firstName}">Name</td>
+				<td th:text="${customer.lastName}">Last Name</td>
+				<td th:text="${customer.email}">Email</td>
+				<td th:text="${customer.createdAt}">Date</td>
+				<td sec:authorize="hasRole('ROLE_ADMIN')">
+					<a class="btn btn-outline-success"
+					   th:href="@{'/invoice/form/' + ${customer.id}}"
+					   th:text="#{text.customer.invoice.create}">Invoice</a>
+				</td>
+				<td sec:authorize="hasRole('ROLE_ADMIN')">
+					<a class="btn btn-outline-warning"
+					   th:href="@{'/form/' + ${customer.id}}"
+					   th:text="#{text.customer.edit}">Edit</a>
+				</td>
+				<td sec:authorize="hasRole('ROLE_ADMIN')">
+					<a class="btn btn-outline-danger"
+					   th:href="@{'/delete/' + ${customer.id}}"
+					   th:text="#{text.customer.delete}"
+					   onclick="return confirm('#{text.customer.deleteConfirm}')">Delete</a>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<nav th:replace="~{paginator-nav :: paginator}"></nav>
+</div>
+
+<footer th:replace="~{layout/layout :: footer}"></footer>
+</body>
+</html>

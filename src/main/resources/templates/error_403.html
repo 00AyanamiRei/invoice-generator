@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout :: head"></head>
+<body>
+
+<header th:replace="layout/layout :: header"></header>
+
+<div class="container py-5">
+	<div class="row justify-content-center">
+		<div class="col-12 col-md-8 col-lg-6">
+			<div class="card shadow-lg border-0" style="background: linear-gradient(135deg, #ffdde1, #ee9ca7); color: #3a2f75;">
+				<div class="card-header text-center fw-bold fs-4">
+					⚠️ <span th:text="#{text.security.error.title}">Access Denied!</span>
+				</div>
+				<div class="card-body text-center">
+					<h5 class="card-title mb-4">
+						<span th:text="${#messages.msg('text.security.error.permission', #authentication.name)}">
+							We are sorry, you do not have permission to access this resource!
+						</span>
+					</h5>
+					<a th:href="@{/list}" class="btn btn-outline-dark px-4 py-2 rounded-pill" role="button"
+					   th:text="#{text.security.error.back}">Go to home</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer th:replace="layout/layout :: footer"></footer>
+</body>
+</html>
