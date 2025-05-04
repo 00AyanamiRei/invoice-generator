@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: target/invoice-generator-1.0.jar
 
   deploy:
     runs-on: ubuntu-latest
@@ -62,4 +62,4 @@ jobs:
         with:
           app-name: 'invoice-generator'
           slot-name: 'Production'
-          package: '*.jar'
+          package: invoice-generator-1.0.jar
