@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `authorities` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table billing_db.authorities
-REPLACE INTO `authorities` (`id`, `user_id`, `authority`) VALUES
+INSERT INTO `authorities` (`id`, `user_id`, `authority`) VALUES
  (1, 1, 'ROLE_USER'),
  (3, 2, 'ROLE_ADMIN'),
  (2, 2, 'ROLE_USER');
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `customers` (
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table billing_db.customers
-REPLACE INTO `customers` (`id`, `last_name`, `created_at`, `email`, `photo`, `first_name`) VALUES
+INSERT INTO `customers` (`id`, `last_name`, `created_at`, `email`, `photo`, `first_name`) VALUES
  (18, 'Nicoll', '2017-08-18', 'stephane.nicoll@gmail.com', '', 'Stephane'),
  (19, 'Brannen', '2017-08-19', 'sam.brannen@gmail.com', '', 'Sam'),
  (20, 'Hoeller', '2017-08-20', 'juergen.Hoeller@gmail.com', '', 'Juergen'),
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `invoices` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table billing_db.invoices
-REPLACE INTO `invoices` (`id`, `created_at`, `description`, `observation`, `client_id`) VALUES
+INSERT INTO `invoices` (`id`, `created_at`, `description`, `observation`, `client_id`) VALUES
  (1, '2022-11-13', 'Office equipment invoice', NULL, 1),
  (2, '2022-11-13', 'Bicycle invoice', 'Some important note!', 1),
  (3, '2022-11-19', 'Office purchases', 'Something important', 2);
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `invoice_items` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table billing_db.invoice_items
-REPLACE INTO `invoice_items` (`id`, `quantity`, `product_id`, `invoice_id`) VALUES
+INSERT INTO `invoice_items` (`id`, `quantity`, `product_id`, `invoice_id`) VALUES
  (1, 1, 1, 1),
  (2, 2, 4, 1),
  (3, 1, 5, 1),
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS `products` (
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table billing_db.products
-REPLACE INTO `products` (`id`, `created_at`, `name`, `price`) VALUES
+INSERT INTO `products` (`id`, `created_at`, `name`, `price`) VALUES
  (1, '2022-11-13', 'Panasonic LCD Screen', 259990),
  (2, '2022-11-13', 'Sony Digital Camera DSC-W320B', 123490),
  (3, '2022-11-13', 'Apple iPod shuffle', 1499990),
@@ -128,6 +128,6 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table billing_db.users
-REPLACE INTO `users` (`id`, `username`, `password`, `enabled`) VALUES
+INSERT INTO `users` (`id`, `username`, `password`, `enabled`) VALUES
  (1, 'andres', '$2a$10$Ok5BIHXFJpJFoFUPp.SFYun9O0fS1sh.5yuhuOn/t5wW6yvaFh94y', 1),
  (2, 'admin', '$2a$10$52xQraLQm0wG0rMnAz.IPuNm/tFRLsVWtM.675eaUQY9aGym0DyMa', 1);
