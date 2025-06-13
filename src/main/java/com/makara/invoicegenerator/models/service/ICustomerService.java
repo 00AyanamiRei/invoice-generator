@@ -3,6 +3,7 @@ package com.makara.invoicegenerator.models.service;
 import com.makara.invoicegenerator.models.entity.Customer;
 import com.makara.invoicegenerator.models.entity.Invoice;
 import com.makara.invoicegenerator.models.entity.Product;
+import com.makara.invoicegenerator.models.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -32,4 +33,7 @@ public interface ICustomerService {
 	public Invoice findInvoiceByIdWithClientWithInvoiceItemsWithProduct(Long id);
 
 	public void deleteInvoice(Long id);
+
+	Page<Customer> findByUser(User user, Pageable pageable);
+
 }

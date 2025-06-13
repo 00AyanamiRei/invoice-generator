@@ -6,6 +6,7 @@ import com.makara.invoicegenerator.models.dao.IProductDao;
 import com.makara.invoicegenerator.models.entity.Customer;
 import com.makara.invoicegenerator.models.entity.Invoice;
 import com.makara.invoicegenerator.models.entity.Product;
+import com.makara.invoicegenerator.models.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -96,4 +97,11 @@ public class CustomerServiceImpl implements ICustomerService {
 	public Invoice findInvoiceByIdWithClientWithInvoiceItemsWithProduct(Long id) {
 		return invoiceDao.fetchByIdWithClientWithInvoiceItemsWithProduct(id);
 	}
+
+	@Override
+	public Page<Customer> findByUser(User user, Pageable pageable) {
+		return clientDao.findByUser(user, pageable);
+	}
+
+
 }

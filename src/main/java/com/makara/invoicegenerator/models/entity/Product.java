@@ -21,10 +21,15 @@ public class Product implements Serializable {
 	@Column(name = "created_at")
 	private Date createdAt;
 
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
 	@PrePersist
 	public void prePersist() {
 		createdAt = new Date();
 	}
+
 
 	public Long getId() {
 		return id;
@@ -57,6 +62,15 @@ public class Product implements Serializable {
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 
 	private static final long serialVersionUID = 1L;
 

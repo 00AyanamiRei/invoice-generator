@@ -61,4 +61,11 @@ public class UserServiceImpl implements IUserService {
             jdbcTemplate.update(insertRoleSql, userId, role);
         }
     }
+
+    @Override
+    public User findByUsername(String username) {
+        String sql = "SELECT * FROM users WHERE username = ?";
+        return jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<>(User.class), username);
+    }
+
 }

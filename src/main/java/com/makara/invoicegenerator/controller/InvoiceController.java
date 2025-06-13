@@ -1,16 +1,16 @@
 package com.makara.invoicegenerator.controller;
 
-import com.makara.invoicegenerator.models.entity.Customer;
-import com.makara.invoicegenerator.models.entity.Invoice;
-import com.makara.invoicegenerator.models.entity.ItemInvoice;
-import com.makara.invoicegenerator.models.entity.Product;
+import com.makara.invoicegenerator.models.entity.*;
 import com.makara.invoicegenerator.models.service.ICustomerService;
 import javax.validation.Valid;
 
+import com.makara.invoicegenerator.models.service.IProductService;
+import com.makara.invoicegenerator.models.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,7 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@Secured("ROLE_ADMIN")
+@Secured("ROLE_USER")
 @Controller
 @RequestMapping(value = "/invoice")
 @SessionAttributes("invoice")
@@ -28,7 +28,11 @@ public class InvoiceController {
 
     @Autowired
     private ICustomerService clientService;
+    @Autowired
+    private IUserService userService;
 
+    @Autowired
+    private IProductService productService;
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -67,10 +71,10 @@ public class InvoiceController {
         return "invoice/form";
     }
 
-    @GetMapping(value = "/load-products/{term}", produces = { "application/json" })
-    public @ResponseBody List<Product> loadProducts(@PathVariable String term) {
-        return clientService.findProductByName(term);
-    }
+//    @GetMapping(value = "/load-products/{term}", produces = { "application/json" })
+//    public @ResponseBody List<Product> loadProducts(@PathVariable String term) {
+//        return clientService.findProductByName(term);
+//    }
 
     @PostMapping("/form")
     public String save(@Valid Invoice invoice, BindingResult result, Model model,
@@ -122,6 +126,13 @@ public class InvoiceController {
 
         flash.addFlashAttribute("error", "The invoice does not exist in the database, it could not be deleted!");
         return "redirect:/list";
+    }
+
+    @GetMapping(value = "/load-products/{term}", produces = "application/json")
+    @ResponseBody
+    public List<Product> loadProducts(@PathVariable String term, Authentication authentication) {
+        User currentUser = userService.findByUsername(authentication.getName());
+        return productService.findByNameAndUser(term, currentUser);
     }
 
 }

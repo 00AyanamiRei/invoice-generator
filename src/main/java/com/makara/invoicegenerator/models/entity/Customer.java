@@ -42,6 +42,10 @@ public class Customer implements Serializable {
     @JsonManagedReference
     private List<Invoice> invoices;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Customer() {
         invoices = new ArrayList<>();
     }
@@ -107,6 +111,15 @@ public class Customer implements Serializable {
     public void addInvoice(Invoice invoice) {
         invoices.add(invoice);
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 
     @Override
     public String toString() {

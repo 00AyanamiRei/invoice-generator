@@ -1,8 +1,10 @@
 package com.makara.invoicegenerator.controller;
 
 import com.makara.invoicegenerator.models.entity.Customer;
+import com.makara.invoicegenerator.models.entity.User;
 import com.makara.invoicegenerator.models.service.ICustomerService;
 import com.makara.invoicegenerator.models.service.IUploadFileService;
+import com.makara.invoicegenerator.models.service.IUserService;
 import com.makara.invoicegenerator.paginator.PageRender;
 import javax.validation.Valid;
 import org.apache.commons.logging.Log;
@@ -31,6 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -48,6 +51,10 @@ public class CustomerController {
 
 	@Autowired
 	private MessageSource messageSource;
+
+	@Autowired
+	private IUserService userService;
+
 
 	@Secured("ROLE_USER")
 	@GetMapping("/uploads/{filename:.+}")
@@ -83,28 +90,47 @@ public class CustomerController {
 		return "view";
 	}
 
-	@RequestMapping(value = {"/list", "/"}, method = RequestMethod.GET)
-	public String list(@RequestParam(name = "page", defaultValue = "0") int page, Model model,
-					   Authentication authentication, Locale locale) {
+//	@RequestMapping(value = {"/list", "/"}, method = RequestMethod.GET)
+//	public String list(@RequestParam(name = "page", defaultValue = "0") int page, Model model,
+//					   Authentication authentication, Locale locale) {
+//
+//		if (authentication != null) {
+//			logger.info("Hello authenticated user, your username is: ".concat(authentication.getName()));
+//		}
+//
+//		Pageable pageRequest = PageRequest.of(page, 4);
+//
+//		Page<Customer> clients = clientService.findAll(pageRequest);
+//
+//		PageRender<Customer> pageRender = new PageRender<>("/list", clients);
+//
+//		model.addAttribute("title", messageSource.getMessage("text.customer.list.title", null, locale));
+//		model.addAttribute("customers", clients);
+//		model.addAttribute("page", pageRender);
+//
+//		return "list";
+//	}
 
-		if (authentication != null) {
-			logger.info("Hello authenticated user, your username is: ".concat(authentication.getName()));
-		}
+	@RequestMapping(value = {"/list"}, method = RequestMethod.GET)
+	public String list(@RequestParam(name = "page", defaultValue = "0") int page,
+					   Model model, Authentication authentication, Locale locale) {
 
-		Pageable pageRequest = PageRequest.of(page, 4);
+		User currentUser = userService.findByUsername(authentication.getName());
 
-		Page<Customer> clients = clientService.findAll(pageRequest);
-
-		PageRender<Customer> pageRender = new PageRender<>("/list", clients);
+		Pageable pageable = PageRequest.of(page, 4);
+		Page<Customer> customers = clientService.findByUser(currentUser, pageable);
+		PageRender<Customer> pageRender = new PageRender<>("/list", customers);
 
 		model.addAttribute("title", messageSource.getMessage("text.customer.list.title", null, locale));
-		model.addAttribute("customers", clients);
+		model.addAttribute("customers", customers);
 		model.addAttribute("page", pageRender);
 
 		return "list";
 	}
 
-	@Secured("ROLE_ADMIN")
+
+	//	@Secured("ROLE_ADMIN")
+	@Secured("ROLE_USER")
 	@RequestMapping(value = "/form", method = RequestMethod.GET)
 	public String create(Map<String, Object> model) {
 		model.put("title", "Customer Form");
@@ -115,31 +141,110 @@ public class CustomerController {
 		return "form";
 	}
 
-	@Secured("ROLE_ADMIN")
+	//	@Secured("ROLE_ADMIN")
+//	@Secured("ROLE_USER")
+//	@RequestMapping(value = "/form/{id}")
+//	public String edit(@PathVariable Long id, Map<String, Object> model,
+//					   RedirectAttributes flash, Authentication authentication) {
+//
+//		Customer customer = null;
+//
+//		User currentUser = userService.findByUsername(authentication.getName());
+//		if (!customer.getUser().getId().equals(currentUser.getId())) {
+//			flash.addFlashAttribute("error", "You do not have permission to access this customer");
+//			return "redirect:/list";
+//		}
+//
+//		if (id > 0) {
+//			customer = clientService.findOne(id);
+//			if (customer == null) {
+//				flash.addFlashAttribute("error", "The customer ID does not exist in the database");
+//				return "redirect:/list";
+//			}
+//		} else {
+//			flash.addFlashAttribute("error", "The customer ID cannot be zero");
+//			return "redirect:/list";
+//		}
+//		model.put("customer", customer);
+//		model.put("title", "Edit Customer");
+//		return "form";
+//	}
+	@Secured("ROLE_USER")
 	@RequestMapping(value = "/form/{id}")
-	public String edit(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
+	public String edit(@PathVariable Long id, Map<String, Object> model,
+					   RedirectAttributes flash, Authentication authentication) {
 
-		Customer customer = null;
-
-		if (id > 0) {
-			customer = clientService.findOne(id);
-			if (customer == null) {
-				flash.addFlashAttribute("error", "The customer ID does not exist in the database");
-				return "redirect:/list";
-			}
-		} else {
-			flash.addFlashAttribute("error", "The customer ID cannot be zero");
+		if (id <= 0) {
+			flash.addFlashAttribute("error", "The customer ID cannot be zero or negative");
 			return "redirect:/list";
 		}
+
+		Customer customer = clientService.findOne(id);
+
+		if (customer == null) {
+			flash.addFlashAttribute("error", "The customer ID does not exist in the database");
+			return "redirect:/list";
+		}
+
+		User currentUser = userService.findByUsername(authentication.getName());
+
+		if (!customer.getUser().getId().equals(currentUser.getId())) {
+			flash.addFlashAttribute("error", "You do not have permission to access this customer");
+			return "redirect:/list";
+		}
+
 		model.put("customer", customer);
 		model.put("title", "Edit Customer");
+
 		return "form";
 	}
 
-	@Secured("ROLE_ADMIN")
+
+	//	@Secured("ROLE_ADMIN")
+//	@Secured("ROLE_USER")
+//	@PostMapping("/form")
+//	public String save(@Valid Customer customer, BindingResult result, Model model,
+//					   @RequestParam("file") MultipartFile photo, RedirectAttributes flash, SessionStatus status) {
+//
+//		if (result.hasErrors()) {
+//			model.addAttribute("title", "Customer Form");
+//			return "form";
+//		}
+//
+//		if (!photo.isEmpty()) {
+//
+//			if (customer.getId() != null && customer.getId() > 0 && customer.getPhoto() != null
+//					&& customer.getPhoto().length() > 0) {
+//				uploadFileService.delete(customer.getPhoto());
+//			}
+//
+//			String uniqueFileName = null;
+//
+//			try {
+//				uniqueFileName = uploadFileService.copy(photo);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//
+//			flash.addFlashAttribute("info", "You have successfully uploaded '" + uniqueFileName + "'");
+//			customer.setPhoto(uniqueFileName);
+//		}
+//
+//		String flashMessage = (customer.getId() != null) ? "Customer successfully edited!" : "Customer successfully created!";
+//
+//		clientService.save(customer);
+//		status.setComplete();
+//		flash.addFlashAttribute("success", flashMessage);
+//
+//		return "redirect:list";
+//	}
+
+	@Secured("ROLE_USER")
 	@PostMapping("/form")
 	public String save(@Valid Customer customer, BindingResult result, Model model,
-					   @RequestParam("file") MultipartFile photo, RedirectAttributes flash, SessionStatus status) {
+					   @RequestParam("file") MultipartFile photo,
+					   RedirectAttributes flash, SessionStatus status,
+					   Authentication authentication) {
 
 		if (result.hasErrors()) {
 			model.addAttribute("title", "Customer Form");
@@ -147,37 +252,43 @@ public class CustomerController {
 		}
 
 		if (!photo.isEmpty()) {
-
 			if (customer.getId() != null && customer.getId() > 0 && customer.getPhoto() != null
 					&& customer.getPhoto().length() > 0) {
 				uploadFileService.delete(customer.getPhoto());
 			}
 
 			String uniqueFileName = null;
-
 			try {
 				uniqueFileName = uploadFileService.copy(photo);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
-			flash.addFlashAttribute("info", "You have successfully uploaded '" + uniqueFileName + "'");
+			flash.addFlashAttribute("info", "Uploaded: " + uniqueFileName);
 			customer.setPhoto(uniqueFileName);
 		}
 
-		String flashMessage = (customer.getId() != null) ? "Customer successfully edited!" : "Customer successfully created!";
+		// Прив’язуємо замовника до поточного користувача
+		User currentUser = userService.findByUsername(authentication.getName());
+		customer.setUser(currentUser);
 
+		String flashMessage = (customer.getId() != null) ? "Customer updated!" : "Customer created!";
 		clientService.save(customer);
 		status.setComplete();
 		flash.addFlashAttribute("success", flashMessage);
 
-		return "redirect:list";
+		return "redirect:/list";
 	}
 
-	@Secured("ROLE_ADMIN")
+
+	//	@Secured("ROLE_ADMIN")
+	@Secured("ROLE_USER")
 	@RequestMapping(value = "/delete/{id}")
-	public String delete(@PathVariable(value = "id") String id, RedirectAttributes flash) {
+	public String delete(@PathVariable String id,
+						 RedirectAttributes flash,
+						 Authentication authentication) {
 		Long customerId;
+		User currentUser = userService.findByUsername(authentication.getName());
 
 		try {
 			customerId = Long.valueOf(id);
@@ -188,6 +299,11 @@ public class CustomerController {
 
 		if (customerId > 0) {
 			Customer customer = clientService.findOne(customerId);
+
+			if (!customer.getUser().getId().equals(currentUser.getId())) {
+				flash.addFlashAttribute("error", "You do not have permission to access this customer");
+				return "redirect:/list";
+			}
 
 			if (customer == null) {
 				flash.addFlashAttribute("error", "The customer does not exist in the database!");

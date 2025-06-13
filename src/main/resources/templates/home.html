@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/layout :: head}"></head>
+<body>
+<header th:replace="~{layout/layout :: header}"></header>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4 text-primary font-weight-bold">
+        Що таке <span class="text-info">InvoiceGenerator</span>?
+    </h1>
+
+    <div class="row justify-content-center text-center">
+        <!-- КРОК 1 -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="card-title">1. Додай Клієнта</h4>
+                    <p class="card-text">Створи профіль замовника з ім’ям, email та фото.</p>
+                    <a href="/form" class="btn btn-primary text-white">➕ Додати клієнта</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- КРОК 2 -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="card-title">2. Додай Продукти</h4>
+                    <p class="card-text">Створи власний список товарів, які будеш додавати до інвойсів.</p>
+                    <a href="/products" class="btn btn-success text-white">📦 Мої продукти</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- КРОК 3 -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h4 class="card-title">3. Створи Інвойс</h4>
+                    <p class="card-text">Обери клієнта, додай товари — і PDF-рахунок готовий!</p>
+                    <a href="/list" class="btn btn-info text-white">🧾 Мої інвойси</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5">
+
+    <!-- Блок з додатковим поясненням -->
+    <div class="text-center">
+        <h5 class="text-danger font-weight-bold">🔥 Просто. Швидко. Зручно.</h5>
+        <p class="text-muted mb-4">Твій власний генератор рахунків прямо в браузері — нічого зайвого.</p>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="alert alert-light border text-left">
+                    <h6 class="text-primary font-weight-bold">Як це працює?</h6>
+                    <ul class="mb-0">
+                        <li>✅ Керуйте клієнтами, продуктами та інвойсами з однієї панелі.</li>
+                        <li>📥 Генеруйте PDF-файли рахунків за лічені секунди.</li>
+                        <li>🗂 Усі ваші документи зберігаються в системі — доступні будь-коли.</li>
+                        <li>🌐 Працює повністю онлайн. Нічого не потрібно встановлювати.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{layout/layout :: footer}" class="mt-5"></footer>
+</body>
+</html>

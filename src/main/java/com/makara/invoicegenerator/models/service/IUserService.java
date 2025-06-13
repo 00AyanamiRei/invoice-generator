@@ -13,4 +13,6 @@ public interface IUserService {
     void delete(Long id);
     List<String> findAllRoles();
     void updateRoles(Long userId, List<String> roles);
+    User findByUsername(String username);
+
 }
